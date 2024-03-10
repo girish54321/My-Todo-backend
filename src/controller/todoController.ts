@@ -6,6 +6,21 @@ import { User, UserToDo } from '../../models';
 import { getFileExtension } from '../middlewares/fileUpload';
 import fs = require('fs');
 
+const getUserTodo = async (req, res, next) => {
+    try {
+        const userId = req.payLoad.aud
+        const todo = await UserToDo.findAll({ where: { userId: parseInt(userId), }, });
+        if (!todo) {
+            throw createError.NotExtended("No Data with us")
+        }
+        res.send({ todo })
+    } catch (error) {
+        console.log("getAllUser error", error);
+        if (error.isJoi === true) error.status = 422
+        next(error)
+    }
+}
+
 const createTdo = async (req, res, next) => {
     try {
         const { title, body } = req.body
@@ -98,4 +113,4 @@ const login = async (req, res, next) => {
     }
 }
 
-export { createTdo, login, updateTodo }
+export { createTdo, login, updateTodo, getUserTodo }

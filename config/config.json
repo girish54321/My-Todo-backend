@@ -1,14 +1,10 @@
 {
   "development":{
-    "username": "postgres_girish",
-    "password": "0H0OPEe2zC3L4I7NuUfxgqD5cPLbbmhf",
-    "database": "database_todo_4q7q",
-    "host": "dpg-cndj5juv3ddc73cbrv1g-a.singapore-postgres.render.com",
-    "port": 5432,
-    "dialect": "postgres",
-    "ssl":{
-      "sslmode":"require"
-    }
+    "username": "postgres",
+    "password": "root",
+    "database": "database_todo",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
   }
   ,
   "test": {

@@ -4,6 +4,24 @@ const { loginAuthSchema } = require('../helper/validation')
 const { signAccessToken, signRefreshToken } = require('../helper/jwthelper')
 const { User } = require('../../models')
 
+export const getProfile = async (req, res, next) => {
+    try {
+        let users;
+        const userId = req.payLoad.aud
+        if (userId) {
+            users = await User.findAll({ where: { id: parseInt(userId), }, include: 'todo' });
+        }
+        if (!users) {
+            throw createError.NotExtended("No Data with us")
+        }
+        res.send({ users })
+    } catch (error) {
+        console.log("getAllUser error", error);
+        if (error.isJoi === true) error.status = 422
+        next(error)
+    }
+}
+
 export const getAllUser = async (req, res, next) => {
     try {
         let users;

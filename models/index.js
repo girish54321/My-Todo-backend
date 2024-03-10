@@ -11,11 +11,12 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize("postgres://postgres_girish:0H0OPEe2zC3L4I7NuUfxgqD5cPLbbmhf@dpg-cndj5juv3ddc73cbrv1g-a.singapore-postgres.render.com/database_todo_4q7q?sslmode=require");
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  // sequelize = new Sequelize("postgres://postgres_girish:0H0OPEe2zC3L4I7NuUfxgqD5cPLbbmhf@dpg-cndj5juv3ddc73cbrv1g-a.singapore-postgres.render.com/database_todo_4q7q?sslmode=require");
 } else {
   // console.log("config.database, config.username, config.password, config", config.database, config.username, config.password, config);
-  // sequelize = new Sequelize(config.database, config.username, config.password, config);
-  sequelize = new Sequelize("postgres://postgres_girish:0H0OPEe2zC3L4I7NuUfxgqD5cPLbbmhf@dpg-cndj5juv3ddc73cbrv1g-a.singapore-postgres.render.com/database_todo_4q7q?sslmode=require");
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  // sequelize = new Sequelize("postgres://postgres_girish:0H0OPEe2zC3L4I7NuUfxgqD5cPLbbmhf@dpg-cndj5juv3ddc73cbrv1g-a.singapore-postgres.render.com/database_todo_4q7q?sslmode=require");
 }
 
 fs
