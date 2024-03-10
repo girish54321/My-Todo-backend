@@ -43,6 +43,29 @@ const createTdo = async (req, res, next) => {
     }
 }
 
+const deleteToDo = async (req, res, next) => {
+    try {
+        const id = req.params.id
+        const userId = req.payLoad.aud;
+        let imagePath = null;
+        if (req.file && req.file.path) {
+            imagePath = req.file.path;
+        }
+        const toDo = await UserToDo.findOne({ where: { id: id, userId: userId } });
+        if (toDo) {
+            await toDo.destroy();
+            return res.send({ deleted: true });
+        }
+        return res.send({ deleted: false });
+    } catch (error) {
+        console.log("Update Todo Error", error);
+        if (error.isJoi === true) {
+            error.status = 422;
+        }
+        next(error);
+    }
+}
+
 const updateTodo = async (req, res, next) => {
     try {
         const { title, body, id, status, deleteFile } = req.body;
@@ -113,4 +136,4 @@ const login = async (req, res, next) => {
     }
 }
 
-export { createTdo, login, updateTodo, getUserTodo }
+export { createTdo, login, updateTodo, getUserTodo, deleteToDo }
