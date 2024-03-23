@@ -53,10 +53,16 @@ const deleteToDo = async (req, res, next) => {
         }
         const toDo = await UserToDo.findOne({ where: { id: id, userId: userId } });
         if (toDo) {
+            if (toDo.todoImage) {
+                if (fs.existsSync(toDo.todoImage)) {
+                    fs.unlinkSync(toDo.todoImage);
+                }
+            }
             await toDo.destroy();
             return res.send({ deleted: true });
+        } else {
+            return res.send({ deleted: false });
         }
-        return res.send({ deleted: false });
     } catch (error) {
         console.log("Update Todo Error", error);
         if (error.isJoi === true) {
@@ -74,32 +80,36 @@ const updateTodo = async (req, res, next) => {
         if (req.file && req.file.path) {
             imagePath = req.file.path;
         }
+        console.log("deleteFile", JSON.stringify(deleteFile));
+        console.log("imagePath", imagePath);
 
-        if (imagePath && deleteFile) {
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
+        if (imagePath && deleteFile === "true") {
             throw createError.BadGateway("you cant upload and delete file at same time")
         }
         const toDo = await UserToDo.findOne({ where: { id: id, userId: userId } });
-        if ((toDo && toDo.todoImage && imagePath) || (deleteFile && toDo.todoImage)) {
-            if (imagePath && deleteFile) {
-                if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
-                }
+        if (toDo && toDo.todoImage && deleteFile === "true") {
+            if (fs.existsSync(toDo.todoImage)) {
+                fs.unlinkSync(toDo.todoImage);
             }
         }
         toDo.title = title;
         toDo.body = body;
         toDo.status = status;
+
         if (imagePath) {
-            toDo.todoImage = imagePath;
+            if (imagePath) {
+                const newFileImage = `todoimages/${toDo.id.toString()}.${getFileExtension(imagePath)}`
+                fs.rename(req?.file?.path, newFileImage, function (err) {
+                    if (err) throw err;
+                });
+                toDo.todoImage = newFileImage
+            }
         }
-        if (deleteFile) {
+        if (deleteFile === "true") {
             toDo.todoImage = null;
         }
         await toDo.save();
-        return res.send({ toDo });
+        return res.send({ post: toDo });
     } catch (error) {
         console.log("Update Todo Error", error);
         if (error.isJoi === true) {
