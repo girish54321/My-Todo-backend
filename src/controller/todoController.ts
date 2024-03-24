@@ -21,6 +21,22 @@ const getUserTodo = async (req, res, next) => {
     }
 }
 
+const getSelectedTodo = async (req, res, next) => {
+    try {
+        const id = req.params.id
+        const userId = req.payLoad.aud
+        const todo = await UserToDo.findOne({ where: { userId: parseInt(userId), id: parseInt(id) }, });
+        if (!todo) {
+            throw createError.NotExtended("No Data with us")
+        }
+        res.send({ todo })
+    } catch (error) {
+        console.log("getAllUser error", error);
+        if (error.isJoi === true) error.status = 422
+        next(error)
+    }
+}
+
 const createTdo = async (req, res, next) => {
     try {
         const { title, body } = req.body
@@ -80,8 +96,6 @@ const updateTodo = async (req, res, next) => {
         if (req.file && req.file.path) {
             imagePath = req.file.path;
         }
-        console.log("deleteFile", JSON.stringify(deleteFile));
-        console.log("imagePath", imagePath);
 
         if (imagePath && deleteFile === "true") {
             throw createError.BadGateway("you cant upload and delete file at same time")
@@ -146,4 +160,4 @@ const login = async (req, res, next) => {
     }
 }
 
-export { createTdo, login, updateTodo, getUserTodo, deleteToDo }
+export { createTdo, login, updateTodo, getUserTodo, deleteToDo, getSelectedTodo }
