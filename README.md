@@ -15,3 +15,6 @@ To use YourProjectName, follow these steps:
     Clone this repository.
     Open the project in Xcode.
     Build and run the app on your device or simulator.
+
+
+    run this to creaet table https://sequelize.org/docs/v7/cli/#running-migrations
