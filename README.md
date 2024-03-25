@@ -19,3 +19,55 @@ My ToDo App (Backend) is a backend service built with Node.js, Express, and Sequ
 - This project is using `sequelize` & `sequelize-cli` to help create tables
 - run `yarn sequelize-cli db:migrate` for more help check `sequelize-cli` [docs](https://sequelize.org/docs/v7/cli/#running-migrations)
 - run `yarn dev` to start the sever
+
+## EndPoints
+
+### Auth
+
+```
+http://localhost:5000/api/v1/auth/signup
+```
+
+```
+http://localhost:5000/api/v1/auth/login
+```
+
+### Todo
+
+```
+http://localhost:5000/api/v1/todo/addtodo
+```
+
+```
+http://localhost:5000/api/v1/todo/updatetodo
+```
+
+```
+http://localhost:5000/api/v1/todo/gettodo
+```
+
+```
+http://localhost:5000/api/v1/todo/gettodo:id
+```
+
+```
+http://localhost:5000/api/v1/todo/deletetodo:id
+```
+
+### Users
+
+```
+http://localhost:5000/api/v1/users/getusers
+```
+
+```
+http://localhost:5000/api/v1/users/getprofile
+```
+
+```
+http://localhost:5000/api/v1/users/updateprofileimage
+```
+
+```
+http://localhost:5000/api/v1/users/deleteaccount
+```
