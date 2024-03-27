@@ -29,8 +29,6 @@ export const updateProfile = async (req, res, next) => {
         await user.save()
         res.send({ user })
     } catch (error) {
-        console.log("createAccount error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }
@@ -54,8 +52,6 @@ export const updateImage = async (req, res, next) => {
         await user.save()
         res.send({ user })
     } catch (error) {
-        console.log("login error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }
@@ -71,10 +67,8 @@ export const deleteProfile = async (req, res, next) => {
         if (!todo) {
             throw createError.NotExtended("No Data with us")
         }
-        console.log("All Todo", JSON.stringify(todo));
         const ogData = JSON.stringify(todo)
         const jsonData = JSON.parse(ogData)
-        console.log("jsonData", jsonData);
         for (let i = 0; i < jsonData.length; i++) {
             let currentItem = jsonData[i]
             if (currentItem?.todoImage) {
@@ -96,7 +90,6 @@ export const deleteProfile = async (req, res, next) => {
         }
         res.send({ deleted: true });
     } catch (error) {
-        console.log("login error", error);
         if (error.isJoi === true) error.status = 422
         next(error)
     }

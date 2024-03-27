@@ -1,8 +1,6 @@
 'use strict';
-import createError = require('http-errors');
-import { loginAuthSchema } from '../helper/validation';
-import { signAccessToken, signRefreshToken, isValidPassword } from '../helper/jwthelper';
-import { User, UserToDo } from '../../models';
+import createError from 'http-errors';
+import { UserToDo } from '../../models';
 import { getFileExtension } from '../middlewares/fileUpload';
 import fs = require('fs');
 
@@ -11,12 +9,11 @@ const getUserTodo = async (req, res, next) => {
         const userId = req.payLoad.aud
         const todo = await UserToDo.findAll({ where: { userId: parseInt(userId), }, });
         if (!todo) {
-            throw createError.NotExtended("No Data with us")
+            res.send({ todo: [] })
+            return
         }
         res.send({ todo })
     } catch (error) {
-        console.log("getAllUser error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }
@@ -27,12 +24,11 @@ const getSelectedTodo = async (req, res, next) => {
         const userId = req.payLoad.aud
         const todo = await UserToDo.findOne({ where: { userId: parseInt(userId), id: parseInt(id) }, });
         if (!todo) {
-            throw createError.NotExtended("No Data with us")
+            res.send({ todo: [] })
+            return
         }
         res.send({ todo })
     } catch (error) {
-        console.log("getAllUser error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }
@@ -53,8 +49,6 @@ const createTdo = async (req, res, next) => {
         }
         return res.send({ post: data })
     } catch (error) {
-        console.log("Create Todo Error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }
@@ -62,6 +56,9 @@ const createTdo = async (req, res, next) => {
 const deleteToDo = async (req, res, next) => {
     try {
         const id = req.params.id
+        if (!id) {
+            throw createError.Conflict("No ToDo Found")
+        }
         const userId = req.payLoad.aud;
         let imagePath = null;
         if (req.file && req.file.path) {
@@ -80,10 +77,6 @@ const deleteToDo = async (req, res, next) => {
             return res.send({ deleted: false });
         }
     } catch (error) {
-        console.log("Update Todo Error", error);
-        if (error.isJoi === true) {
-            error.status = 422;
-        }
         next(error);
     }
 }
@@ -125,39 +118,8 @@ const updateTodo = async (req, res, next) => {
         await toDo.save();
         return res.send({ post: toDo });
     } catch (error) {
-        console.log("Update Todo Error", error);
-        if (error.isJoi === true) {
-            error.status = 422;
-        }
         next(error);
     }
 }
 
-
-const login = async (req, res, next) => {
-    try {
-        const result = await loginAuthSchema.validateAsync(req.body)
-        const user = await User.findOne({ where: { email: result.email } });
-        if (!user) {
-            throw createError.Conflict("No User Found")
-        }
-        const PASSWORD = user.dataValues.password.toString()
-        if (!PASSWORD) {
-            throw createError.Conflict("No Pass")
-        }
-        const USER_ID = user.dataValues.id.toString()
-        const isMatch = await isValidPassword(PASSWORD, result.password)
-        if (!isMatch) {
-            throw createError.BadGateway("No Pass Bro")
-        }
-        const accessToken = await signAccessToken(USER_ID)
-        const refreshToken2 = await signRefreshToken(USER_ID)
-        res.send({ accessToken, refreshToken: refreshToken2 })
-    } catch (error) {
-        console.log("login Error", error);
-        if (error.isJoi === true) error.status = 422
-        next(error)
-    }
-}
-
-export { createTdo, login, updateTodo, getUserTodo, deleteToDo, getSelectedTodo }
+export { createTdo, updateTodo, getUserTodo, deleteToDo, getSelectedTodo }
