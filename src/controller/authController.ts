@@ -8,7 +8,7 @@ const createAccount = async (req, res, next) => {
         const result = await authSchema.validateAsync(req.body)
         const diesExist = await User.findOne({ where: { email: result.email } });
         if (diesExist) {
-            throw createError.Conflict("Use other email")
+            throw createError.Conflict("Email already is used")
         }
         const createdUser = await User.create(result)
         const USER_ID = createdUser.dataValues.id.toString()
@@ -17,14 +17,12 @@ const createAccount = async (req, res, next) => {
         const password = await hashPassword(result.password)
         const user = await User.findOne({ where: { id: USER_ID } })
         if (!password) {
-            throw createError.Conflict("Server Error!")
+            throw createError.BadRequest()
         }
         user.password = password
         await user.save()
         res.send({ accessToken, refreshToken })
     } catch (error) {
-        console.log("createAccount error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }
@@ -40,14 +38,16 @@ const login = async (req, res, next) => {
         if (!PASSWORD) {
             throw createError.Conflict("No Pass")
         }
+
         const USER_ID = user.dataValues.id.toString()
         const isMatch = await isValidPassword(PASSWORD, result.password)
+        if (!isMatch) {
+            throw createError.BadGateway("Email Or Password is wrong")
+        }
         const accessToken = await signAccessToken(USER_ID)
         const refreshToken2 = await signRefreshToken(USER_ID)
         res.send({ accessToken, refreshToken: refreshToken2 })
     } catch (error) {
-        console.log("login error", error);
-        if (error.isJoi === true) error.status = 422
         next(error)
     }
 }

@@ -10,6 +10,10 @@ My ToDo App (Backend) is a backend service built with Node.js, Express, and Sequ
 
 [Todo App](https://github.com/girish54321/MyToDo-Swfit-UI)
 
+## Screenshots
+
+<img width="1604"  src="appimage/appbanner.png?raw=true">
+
 ## Installation
 
 - Clone the reop
